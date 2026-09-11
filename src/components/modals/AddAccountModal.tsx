@@ -136,7 +136,9 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
           <label className="text-xs font-bold text-(--ink-2) block mb-1.5">
             Select Bank or E-Wallet
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+          {/* Scrolls with the modal body (nested scroll areas trap touch
+              scrolling on phones). */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pr-1">
             {POPULAR_BANKS_AND_WALLETS.map((preset) => {
               const isSelected = preset.id === selectedPresetId;
               const isGrbi = preset.id === 'grbi';

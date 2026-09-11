@@ -71,7 +71,7 @@ export const QuickActionsSheet: React.FC<QuickActionsSheetProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
       <div
-        className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm motion-fade"
+        className="absolute inset-0 touch-none bg-slate-950/50 backdrop-blur-sm motion-fade"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -80,6 +80,9 @@ export const QuickActionsSheet: React.FC<QuickActionsSheetProps> = ({
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        // dvh tracks browser chrome + the on-screen keyboard; the class is
+        // the fallback for browsers without dvh support.
+        style={{ maxHeight: '85dvh' }}
         className="relative z-10 w-full max-w-lg bg-(--surface) rounded-t-[32px] sm:rounded-[28px] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col motion-enter"
       >
         {/* Drag handle + header */}
@@ -107,8 +110,12 @@ export const QuickActionsSheet: React.FC<QuickActionsSheetProps> = ({
           </button>
         </div>
 
-        {/* Action list */}
-        <div className="overflow-y-auto px-3 py-3 space-y-1.5">
+        {/* Action list — min-h-0 lets it shrink so every action stays
+            reachable by scrolling on short screens. */}
+        <div
+          className="overflow-y-auto overscroll-contain px-3 py-3 space-y-1.5 min-h-0 flex-1"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        >
           {actions.map((action) => {
             const Icon = action.icon;
             const isPrimary = action.id === 'expense';

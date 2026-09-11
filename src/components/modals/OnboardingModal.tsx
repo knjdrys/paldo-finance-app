@@ -161,7 +161,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onComp
               <label className="text-xs font-bold text-(--ink-2) block mb-1.5">
                 {t('onboard.bankLabel')}
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1">
+              {/* Scrolls with the modal body (nested scroll areas trap touch
+                  scrolling on phones). */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pr-1">
                 {POPULAR_BANKS_AND_WALLETS.slice(0, 9).map((preset) => {
                   const isSelected = preset.id === selectedBankPresetId;
                   const isGrbi = preset.id === 'grbi';

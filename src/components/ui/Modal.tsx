@@ -94,9 +94,9 @@ export const Modal: React.FC<ModalProps> = ({
       : 'max-w-md';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-sm">
       <div
-        className="fixed inset-0"
+        className="fixed inset-0 touch-none"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -107,7 +107,12 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className={`relative z-10 w-full ${maxWidthClass} bg-(--surface) rounded-t-[32px] sm:rounded-[28px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-in slide-in-from-bottom duration-250`}
+        // maxHeight: dvh tracks the *dynamic* viewport (browser chrome + the
+        // on-screen keyboard), so the sheet shrinks instead of hiding the
+        // footer behind the keyboard; the max-h-[90vh] class stays as the
+        // fallback for browsers without dvh support.
+        style={{ maxHeight: '90dvh' }}
+        className={`relative z-10 w-full ${maxWidthClass} bg-(--surface) rounded-t-[32px] sm:rounded-[28px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col`}
       >
         {/* Mobile Drag Handle */}
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
@@ -129,8 +134,15 @@ export const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        {/* Modal Scrollable Body */}
-        <div className="overflow-y-auto px-6 py-5 flex-1 space-y-4">
+        {/* Modal Scrollable Body — min-h-0 lets this flex child shrink below
+            its content height so overflow-y-auto actually scrolls instead of
+            being clipped by the shell's max-height (the "can't scroll down /
+            save button unreachable" bug). The bottom padding clears the iOS
+            home indicator in edge-to-edge viewports. */}
+        <div
+          className="overflow-y-auto overscroll-contain px-6 py-5 flex-1 min-h-0 space-y-4"
+          style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+        >
           {children}
         </div>
       </div>
