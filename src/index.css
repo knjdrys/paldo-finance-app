@@ -58,9 +58,18 @@
 .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-@keyframes finova-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+/* Entrances must END on `transform: none`. These animations run with
+   `animation-fill-mode: both`, so the final keyframe keeps applying forever
+   — a lingering translateY(0)/scale(1) transform made every animated
+   ancestor a CSS containing block for `position: fixed` descendants. The
+   bottom nav and every modal are fixed-positioned INSIDE the animated app
+   wrapper, so they anchored to the bottom of the page-height wrapper
+   instead of the viewport (nav only visible after scrolling the whole
+   Settings tab; modals rendered off-screen). `transform: none` creates no
+   containing block, so fixed elements anchor to the viewport again. */
+@keyframes finova-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes finova-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes finova-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes finova-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes finova-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .motion-enter { animation: finova-in var(--motion-standard) var(--motion-ease-out) both; }
 .motion-fade { animation: finova-fade var(--motion-fast) var(--motion-ease-out) both; }
@@ -98,3 +107,11 @@
 :focus-visible { outline: 2px solid #059669; outline-offset: 2px; border-radius: 6px; }
 /* Tabular numerals keep money columns from jittering as values change */
 .money, .money * { font-variant-numeric: tabular-nums; }
+
+/* Mobile forms: iOS Safari auto-zooms the viewport whenever a focused
+   input/select/textarea has a font-size below 16px, which made every phone
+   form (Add Bank, Add Category, PIN, balances) jump and scroll wildly while
+   typing. !important is required to beat utility text-size classes. */
+@media (max-width: 639px) {
+  input, select, textarea { font-size: 16px !important; }
+}
